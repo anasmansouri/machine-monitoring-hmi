@@ -1,14 +1,32 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QMetaObject>
+#include <QString>
+#include "Ros2TelemetryClient.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <machine_interfaces/msg/machine_telemetry.hpp>
+
+#include <thread>
 
 #include "TelemetryModel.hpp"
 
 int main(int argc, char *argv[])
 {
+    rclcpp::init(argc, argv);
     QGuiApplication app(argc, argv);
 
     TelemetryModel telemetryModel;
+    Ros2TelemetryClient ros2Client;
+
+    QObject::connect(
+        &ros2Client,
+        &Ros2TelemetryClient::telemetryReceived,
+        &telemetryModel,
+        &TelemetryModel::setTelemetry,
+        Qt::QueuedConnection);
+
+    ros2Client.start();
 
     QQmlApplicationEngine engine;
 
@@ -29,6 +47,10 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
 
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&]()
+    {
+        ros2Client.stop();
+    });
     engine.load(url);
 
     return app.exec();

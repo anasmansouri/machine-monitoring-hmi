@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QTimer>
+// #include <QTimer>
 
 class TelemetryModel : public QObject
 {
@@ -30,8 +30,13 @@ public:
 signals:
     void telemetryChanged();
 
-private slots:
-    void updateFakeTelemetry();
+public slots:
+    // void updateFakeTelemetry();
+    void setTelemetry(int temperature,
+                      int humidity,
+                      int load,
+                      const QString &state,
+                      const QString &fault);
 
 private:
     int temperature_ = 24;
@@ -41,5 +46,5 @@ private:
     QString state_ = "MACHINE_STATE_IDLE";
     QString fault_ = "FAULT_NONE";
 
-    QTimer timer_;
+    // QTimer timer_;
 };

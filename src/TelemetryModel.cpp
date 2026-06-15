@@ -5,10 +5,7 @@
 TelemetryModel::TelemetryModel(QObject *parent)
     : QObject(parent)
 {
-    connect(&timer_, &QTimer::timeout,
-            this, &TelemetryModel::updateFakeTelemetry);
 
-    timer_.start(1000);
 }
 
 int TelemetryModel::temperature() const
@@ -64,33 +61,17 @@ void TelemetryModel::resetFault()
     emit telemetryChanged();
 }
 
-void TelemetryModel::updateFakeTelemetry()
+void TelemetryModel::setTelemetry(int temperature,
+                                  int humidity,
+                                  int load,
+                                  const QString &state,
+                                  const QString &fault)
 {
-    load_ += 5;
-
-    if (load_ > 100)
-    {
-        load_ = 10;
-    }
-
-    temperature_ = 22 + (load_ / 10);
-    humidity_ = 45 + (load_ / 20);
-
-    if (load_ >= 80)
-    {
-        state_ = "MACHINE_STATE_FAULT";
-        fault_ = "FAULT_LOAD_TOO_HIGH";
-    }
-    else if (load_ >= 60)
-    {
-        state_ = "MACHINE_STATE_WARNING";
-        fault_ = "FAULT_NONE";
-    }
-    else if (state_ != "MACHINE_STATE_IDLE")
-    {
-        state_ = "MACHINE_STATE_RUNNING";
-        fault_ = "FAULT_NONE";
-    }
+    temperature_ = temperature;
+    humidity_ = humidity;
+    load_ = load;
+    state_ = state;
+    fault_ = fault;
 
     emit telemetryChanged();
 }
