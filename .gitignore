@@ -67,3 +67,7 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+build-docker/

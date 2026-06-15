@@ -1,0 +1,39 @@
+services:
+  hmi-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: machine-hmi-ros2-qt
+
+    container_name: machine-hmi-dev
+
+    network_mode: host
+
+    # Keep the container interactive
+    stdin_open: true
+    tty: true
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      QT_X11_NO_MITSHM: "1"
+      QT_QPA_PLATFORM: xcb
+
+      QT_QUICK_BACKEND: software
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      QT_XCB_GL_INTEGRATION: none
+
+      # ROS2 network configuration
+      ROS_DOMAIN_ID: "7"
+      ROS_LOCALHOST_ONLY: "0"
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+      - .:/hmi
+
+      - /home/anas/personal_projects/yocto_project/machine-monitoring-edge-gateway:/gateway
+
+    working_dir: /hmi
+
+    command: bash
