@@ -15,9 +15,16 @@ Ros2TelemetryClient::Ros2TelemetryClient(QObject *parent)
             });
 }
 
+
+
 Ros2TelemetryClient::~Ros2TelemetryClient()
 {
     stop();
+}
+
+rclcpp::Node::SharedPtr Ros2TelemetryClient::node() const
+{
+    return node_;
 }
 
 void Ros2TelemetryClient::start()

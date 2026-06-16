@@ -19,7 +19,7 @@ public:
 
     void start();
     void stop();
-
+    rclcpp::Node::SharedPtr node() const;
 signals:
     void telemetryReceived(int temperature,
                            int humidity,

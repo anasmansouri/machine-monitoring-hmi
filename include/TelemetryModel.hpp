@@ -29,6 +29,9 @@ public:
 
 signals:
     void telemetryChanged();
+    void startMachineRequested();
+    void stopMachineRequested();
+    void resetFaultRequested();
 
 public slots:
     // void updateFakeTelemetry();

@@ -36,29 +36,19 @@ QString TelemetryModel::fault() const
 void TelemetryModel::startMachine()
 {
     qDebug() << "Start machine clicked";
-
-    if (fault_ == "FAULT_NONE")
-    {
-        state_ = "MACHINE_STATE_RUNNING";
-        emit telemetryChanged();
-    }
+    emit startMachineRequested();
 }
 
 void TelemetryModel::stopMachine()
 {
     qDebug() << "Stop machine clicked";
-
-    state_ = "MACHINE_STATE_IDLE";
-    emit telemetryChanged();
+    emit stopMachineRequested();
 }
 
 void TelemetryModel::resetFault()
 {
     qDebug() << "Reset fault clicked";
-
-    fault_ = "FAULT_NONE";
-    state_ = "MACHINE_STATE_IDLE";
-    emit telemetryChanged();
+    emit resetFaultRequested();
 }
 
 void TelemetryModel::setTelemetry(int temperature,

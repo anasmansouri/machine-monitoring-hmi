@@ -14,14 +14,17 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(machine_interfaces REQUIRED)
+find_package(std_srvs REQUIRED)
 
 add_executable(machine_monitoring_hmi
     src/main.cpp
     src/TelemetryModel.cpp
     src/Ros2TelemetryClient.cpp
+    src/Ros2CommandClient.cpp
 
     include/TelemetryModel.hpp
     include/Ros2TelemetryClient.hpp
+    include/Ros2CommandClient.hpp
 )
 
 target_include_directories(machine_monitoring_hmi PRIVATE include)
@@ -41,4 +44,5 @@ target_link_libraries(machine_monitoring_hmi
 ament_target_dependencies(machine_monitoring_hmi
     rclcpp
     machine_interfaces
+    std_srvs
 )
