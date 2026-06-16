@@ -20,6 +20,10 @@ The goal of this project is to build a practical embedded HMI that demonstrates 
 
 This project is part of a larger embedded Linux and STM32 machine monitoring platform.
 
+## Screenshot
+
+![Machine Monitoring HMI](docs/images/hmi-dashboard.png)
+
 ## System Architecture
 
 ```text
@@ -455,6 +459,4 @@ machine-monitoring-hmi : https://github.com/anasmansouri/machine-monitoring-hmi
 ```
 Together, these projects demonstrate an end-to-end embedded monitoring and control system.
 
-## Screenshot
 
-![Machine Monitoring HMI](docs/images/hmi-dashboard.png)
