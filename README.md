@@ -454,3 +454,7 @@ stm32-machine-io-node : https://github.com/anasmansouri/stm32-machine-io-node
 machine-monitoring-hmi : https://github.com/anasmansouri/machine-monitoring-hmi 
 ```
 Together, these projects demonstrate an end-to-end embedded monitoring and control system.
+
+## Screenshot
+
+![Machine Monitoring HMI](docs/images/hmi-dashboard.png)
