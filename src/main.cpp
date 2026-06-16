@@ -51,6 +51,11 @@ int main(int argc, char *argv[])
         &telemetryModel,
         &TelemetryModel::setCommandResult,
         Qt::QueuedConnection);
+    QObject::connect(
+        &telemetryModel,
+        &TelemetryModel::setLoadThresholdRequested,
+        &commandClient,
+        &Ros2CommandClient::setLoadThreshold);
 
     ros2Client.start();
 

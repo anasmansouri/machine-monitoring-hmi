@@ -91,3 +91,12 @@ void TelemetryModel::setCommandResult(const QString &commandName,
 
     emit commandResultChanged();
 }
+
+void TelemetryModel::setLoadThreshold(int warning, int fault)
+{
+    qDebug() << "Set load threshold clicked:"
+             << "warning =" << warning
+             << "fault =" << fault;
+
+    emit setLoadThresholdRequested(warning, fault);
+}

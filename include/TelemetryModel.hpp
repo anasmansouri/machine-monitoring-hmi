@@ -34,6 +34,7 @@ public:
     Q_INVOKABLE void startMachine();
     Q_INVOKABLE void stopMachine();
     Q_INVOKABLE void resetFault();
+    Q_INVOKABLE void setLoadThreshold(int warning, int fault);
 
 signals:
     void telemetryChanged();
@@ -41,6 +42,7 @@ signals:
     void stopMachineRequested();
     void resetFaultRequested();
     void commandResultChanged();
+    void setLoadThresholdRequested(int warning, int fault);
 
 public slots:
     void setTelemetry(int temperature,
