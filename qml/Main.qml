@@ -5,7 +5,7 @@ import QtQuick.Layouts
 ApplicationWindow {
     visible: true
     width: 900
-    height: 600
+    height: 650
     title: "Machine Monitoring HMI"
 
     color: "#1f2430"
@@ -174,6 +174,59 @@ ApplicationWindow {
 
         Item {
             Layout.fillHeight: true
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            height: 110
+            radius: 12
+            color: cardBackground
+            border.color: borderColor
+            border.width: 1
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 16
+                spacing: 8
+
+                Label {
+                    text: "Last Command Result"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: cardTextColor
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    Label {
+                        text: "Command:"
+                        font.pixelSize: 16
+                        color: secondaryTextColor
+                    }
+
+                    Label {
+                        text: telemetryModel.lastCommandName
+                        font.pixelSize: 16
+                        font.bold: true
+                        color: cardTextColor
+                    }
+
+                    Label {
+                        text: telemetryModel.lastCommandSuccess ? "SUCCESS" : "FAILED"
+                        font.pixelSize: 16
+                        font.bold: true
+                        color: telemetryModel.lastCommandSuccess ? "#15803d" : "#b91c1c"
+                    }
+                }
+
+                Label {
+                    text: telemetryModel.lastCommandMessage
+                    font.pixelSize: 16
+                    color: cardTextColor
+                    Layout.fillWidth: true
+                }
+            }
         }
 
         RowLayout {

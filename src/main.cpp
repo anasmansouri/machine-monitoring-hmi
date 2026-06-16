@@ -45,6 +45,12 @@ int main(int argc, char *argv[])
         &TelemetryModel::resetFaultRequested,
         &commandClient,
         &Ros2CommandClient::resetFault);
+    QObject::connect(
+        &commandClient,
+        &Ros2CommandClient::commandResult,
+        &telemetryModel,
+        &TelemetryModel::setCommandResult,
+        Qt::QueuedConnection);
 
     ros2Client.start();
 

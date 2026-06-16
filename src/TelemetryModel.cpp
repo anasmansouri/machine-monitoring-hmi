@@ -33,6 +33,21 @@ QString TelemetryModel::fault() const
     return fault_;
 }
 
+QString TelemetryModel::lastCommandName() const
+{
+    return lastCommandName_;
+}
+
+bool TelemetryModel::lastCommandSuccess() const
+{
+    return lastCommandSuccess_;
+}
+
+QString TelemetryModel::lastCommandMessage() const
+{
+    return lastCommandMessage_;
+}
+
 void TelemetryModel::startMachine()
 {
     qDebug() << "Start machine clicked";
@@ -64,4 +79,15 @@ void TelemetryModel::setTelemetry(int temperature,
     fault_ = fault;
 
     emit telemetryChanged();
+}
+
+void TelemetryModel::setCommandResult(const QString &commandName,
+                                      bool success,
+                                      const QString &message)
+{
+    lastCommandName_ = commandName;
+    lastCommandSuccess_ = success;
+    lastCommandMessage_ = message;
+
+    emit commandResultChanged();
 }
