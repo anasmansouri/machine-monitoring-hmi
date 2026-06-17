@@ -404,14 +404,13 @@ Working features:
 * Start, stop, and reset fault buttons call real ROS2 services
 * Command results are displayed in the GUI
 * Load warning and fault thresholds can be configured from the HMI
+* Connection status display
 
 ## Future Improvements
 
 Planned next steps:
 
-* Add connection status display
 * Show last telemetry update time
-* Add offline detection when Raspberry Pi is not reachable
 * Improve UI layout and styling
 
 ## Example End-to-End Flow
