@@ -18,6 +18,8 @@ class TelemetryModel : public QObject
     Q_PROPERTY(bool lastCommandSuccess READ lastCommandSuccess NOTIFY commandResultChanged)
     Q_PROPERTY(QString lastCommandMessage READ lastCommandMessage NOTIFY commandResultChanged)
 
+    Q_PROPERTY(int connectStatus READ connectStatus NOTIFY connectStatusChanged)
+
 public:
     explicit TelemetryModel(QObject *parent = nullptr);
 
@@ -29,6 +31,7 @@ public:
     QString lastCommandName() const;
     bool lastCommandSuccess() const;
     QString lastCommandMessage() const;
+    bool connectStatus() const;
 
 
     Q_INVOKABLE void startMachine();
@@ -43,6 +46,7 @@ signals:
     void resetFaultRequested();
     void commandResultChanged();
     void setLoadThresholdRequested(int warning, int fault);
+    void connectStatusChanged();
 
 public slots:
     void setTelemetry(int temperature,
@@ -53,6 +57,7 @@ public slots:
     void setCommandResult(const QString &commandName,
                       bool success,
                       const QString &message);
+    void setConnectStatus(bool status);
 
 private:
     int temperature_ = 24;
@@ -65,4 +70,5 @@ private:
     QString lastCommandName_ = "NONE";
     bool lastCommandSuccess_ = false;
     QString lastCommandMessage_ = "No command sent yet";
+    bool connectStatus_ = false;
 };

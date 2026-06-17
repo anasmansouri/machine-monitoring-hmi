@@ -5,7 +5,7 @@ import QtQuick.Layouts
 ApplicationWindow {
     visible: true
     width: 900
-    height: 800
+    height: 900
     title: "Machine Monitoring HMI"
 
     color: "#1f2430"
@@ -14,6 +14,25 @@ ApplicationWindow {
         property color cardTextColor: "#111827"
             property color secondaryTextColor: "#4b5563"
                 property color borderColor: "#d1d5db"
+                    function connectionStatusText(status)
+                    {
+                        if (status === 1)
+                        {
+                            return "CONNECTED"
+                        }
+
+                        return "OFFLINE"
+                    }
+
+                    function connectionStatusColor(status)
+                    {
+                        if (status === 1)
+                        {
+                            return "#16a34a"   // green
+                        }
+
+                        return "#dc2626"       // red
+                    }
 
                     ColumnLayout {
                         anchors.fill: parent
@@ -26,6 +45,34 @@ ApplicationWindow {
                             font.bold: true
                             color: "white"
                             Layout.alignment: Qt.AlignHCenter
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 70
+                            radius: 12
+                            color: cardBackground
+                            border.color: borderColor
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 18
+                                spacing: 12
+
+                                Label {
+                                    text: "System Status:"
+                                    font.pixelSize: 20
+                                    font.bold: true
+                                    color: cardTextColor
+                                }
+
+                                Label {
+                                    text: connectionStatusText(telemetryModel.connectStatus)
+                                    font.pixelSize: 20
+                                    font.bold: true
+                                    color: connectionStatusColor(telemetryModel.connectStatus)
+                                }
+                            }
                         }
 
                         GridLayout {
@@ -235,6 +282,7 @@ ApplicationWindow {
 
                                 Button {
                                     text: "Set Threshold"
+                                    enabled: telemetryModel.connectStatus===1
 
                                     onClicked: {
                                         const warning = parseInt(warningThresholdInput.text)
@@ -318,16 +366,19 @@ ApplicationWindow {
                             Button {
                                 text: "Start Machine"
                                 onClicked: telemetryModel.startMachine()
+                                enabled: telemetryModel.connectStatus===1
                             }
 
                             Button {
                                 text: "Stop Machine"
                                 onClicked: telemetryModel.stopMachine()
+                                enabled: telemetryModel.connectStatus===1
                             }
 
                             Button {
                                 text: "Reset Fault"
                                 onClicked: telemetryModel.resetFault()
+                                enabled: telemetryModel.connectStatus===1
                             }
                         }
                     }

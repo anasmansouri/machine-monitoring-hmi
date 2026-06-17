@@ -100,3 +100,11 @@ void TelemetryModel::setLoadThreshold(int warning, int fault)
 
     emit setLoadThresholdRequested(warning, fault);
 }
+
+void TelemetryModel::setConnectStatus(bool status){
+    this->connectStatus_=status;
+    emit connectStatusChanged();
+}
+bool TelemetryModel::connectStatus() const{
+    return this->connectStatus_;
+}

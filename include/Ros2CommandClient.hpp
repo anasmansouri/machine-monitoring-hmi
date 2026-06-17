@@ -25,7 +25,6 @@ signals:
     void commandResult(QString commandName,
                        bool success,
                        QString message);
-
 private:
     void callTriggerService(
         const QString &commandName,

@@ -27,6 +27,12 @@ int main(int argc, char *argv[])
         &telemetryModel,
         &TelemetryModel::setTelemetry,
         Qt::QueuedConnection);
+    QObject::connect(
+        &ros2Client,
+        &Ros2TelemetryClient::connectStatus,
+        &telemetryModel,
+        &TelemetryModel::setConnectStatus,
+        Qt::QueuedConnection);
 
     QObject::connect(
         &telemetryModel,
