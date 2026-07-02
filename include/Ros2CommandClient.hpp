@@ -5,7 +5,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
-#include <machine_interfaces/srv/set_load_threshold.hpp>
+#include "machine_interfaces/srv/set_threshold.hpp"
 
 class Ros2CommandClient : public QObject
 {
@@ -36,5 +36,5 @@ private:
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr startMachineClient_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr stopMachineClient_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr resetFaultClient_;
-    rclcpp::Client<machine_interfaces::srv::SetLoadThreshold>::SharedPtr setLoadThresholdClient_;
+    rclcpp::Client<machine_interfaces::srv::SetThreshold>::SharedPtr setLoadThresholdClient_;
 };

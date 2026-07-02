@@ -15,8 +15,9 @@ Ros2CommandClient::Ros2CommandClient(rclcpp::Node::SharedPtr node,
 
     resetFaultClient_ =
         node_->create_client<std_srvs::srv::Trigger>("/machine/reset_fault");
+
     setLoadThresholdClient_ =
-        node_->create_client<machine_interfaces::srv::SetLoadThreshold>(
+        node_->create_client<machine_interfaces::srv::SetThreshold>(
             "/machine/set_load_threshold");
 }
 
@@ -82,14 +83,14 @@ void Ros2CommandClient::setLoadThreshold(int warning, int fault)
     }
 
     auto request =
-        std::make_shared<machine_interfaces::srv::SetLoadThreshold::Request>();
+        std::make_shared<machine_interfaces::srv::SetThreshold::Request>();
 
     request->warning = warning;
     request->fault = fault;
 
     setLoadThresholdClient_->async_send_request(
         request,
-        [this, commandName](rclcpp::Client<machine_interfaces::srv::SetLoadThreshold>::SharedFuture future)
+        [this, commandName](rclcpp::Client<machine_interfaces::srv::SetThreshold>::SharedFuture future)
         {
             auto response = future.get();
 

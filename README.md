@@ -368,6 +368,7 @@ Test a service manually:
 
 ```bash
 ros2 service call /machine/reset_fault std_srvs/srv/Trigger "{}"
+ros2 service call /machine/start_machine std_srvs/srv/Trigger "{}"
 ```
 
 ## Docker Notes
