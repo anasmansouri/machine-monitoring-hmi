@@ -75,6 +75,9 @@ void Ros2TelemetryClient::handleTelemetry(
         msg->temperature,
         msg->humidity,
         msg->load,
+        msg->vibration_level_mg,
+        msg->emergency_button,
+        msg->fan_rpm,
         QString::fromStdString(msg->state),
         QString::fromStdString(msg->fault));
 }

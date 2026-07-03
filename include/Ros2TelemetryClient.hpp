@@ -27,6 +27,9 @@ signals:
     void telemetryReceived(int temperature,
                            int humidity,
                            int load,
+                           int vibration_level_mg,
+                           bool emergency_button,
+                           unsigned int fanRpm,
                            QString state,
                            QString fault);
 

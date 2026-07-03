@@ -20,6 +20,7 @@ public slots:
     void stopMachine();
     void resetFault();
     void setLoadThreshold(int warning, int fault);
+    void setVibrationThreshold(int warning, int fault);
 
 signals:
     void commandResult(QString commandName,
@@ -37,4 +38,5 @@ private:
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr stopMachineClient_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr resetFaultClient_;
     rclcpp::Client<machine_interfaces::srv::SetThreshold>::SharedPtr setLoadThresholdClient_;
+    rclcpp::Client<machine_interfaces::srv::SetThreshold>::SharedPtr setVibrationThresholdClient_;
 };

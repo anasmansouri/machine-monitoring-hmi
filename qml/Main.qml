@@ -188,6 +188,90 @@ ApplicationWindow {
                                     }
                                 }
                             }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 100
+                                radius: 12
+                                color: cardBackground
+                                border.color: borderColor
+                                border.width: 1
+
+                                Column {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Label {
+                                        text: "Fan RPM"
+                                        font.pixelSize: 18
+                                        color: secondaryTextColor
+                                    }
+
+                                    Label {
+                                        text: telemetryModel.fanRpm
+                                        font.pixelSize: 22
+                                        font.bold: true
+                                        color: cardTextColor
+                                    }
+                                }
+                            }
+
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 100
+                                radius: 12
+                                color: cardBackground
+                                border.color: borderColor
+                                border.width: 1
+
+                                Column {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Label {
+                                        text: "emergency Button"
+                                        font.pixelSize: 18
+                                        color: secondaryTextColor
+                                    }
+
+                                    Label {
+                                        text: telemetryModel.emergency_button
+                                        font.pixelSize: 22
+                                        font.bold: true
+                                        color: cardTextColor
+                                    }
+                                }
+                            }
+
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 100
+                                radius: 12
+                                color: cardBackground
+                                border.color: borderColor
+                                border.width: 1
+
+                                Column {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Label {
+                                        text: "vibration level"
+                                        font.pixelSize: 18
+                                        color: secondaryTextColor
+                                    }
+
+                                    Label {
+                                        text: telemetryModel.vibration_level_mg
+                                        font.pixelSize: 22
+                                        font.bold: true
+                                        color: cardTextColor
+                                    }
+                                }
+                            }
+
                         }
 
                         Rectangle {
@@ -305,6 +389,91 @@ ApplicationWindow {
                                 }
                             }
                         }
+
+                     Rectangle {
+                            Layout.fillWidth: true
+                            height: 120
+                            radius: 12
+                            color: cardBackground
+                            border.color: borderColor
+                            border.width: 1
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 16
+                                spacing: 16
+
+                                Label {
+                                    text: "Vibration Thresholds"
+                                    font.pixelSize: 18
+                                    font.bold: true
+                                    color: cardTextColor
+                                }
+
+                                ColumnLayout {
+                                    spacing: 4
+
+                                    Label {
+                                        text: "Warning Threshold"
+                                        font.pixelSize: 14
+                                        font.bold: true
+                                        color: "#d97706"
+                                    }
+
+                                    TextField {
+                                        id: vibration_warningThresholdInput
+                                        text: "1800"
+                                        inputMethodHints: Qt.ImhDigitsOnly
+                                        Layout.preferredWidth: 120
+                                        // color: "#d97706"
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    spacing: 4
+
+                                    Label {
+                                        text: "Fault Threshold"
+                                        font.pixelSize: 14
+                                        font.bold: true
+                                        color: "#dc2626"
+                                    }
+
+                                    TextField {
+                                        id: vibration_faultThresholdInput
+                                        text: "2500"
+                                        inputMethodHints: Qt.ImhDigitsOnly
+                                        Layout.preferredWidth: 120
+                                        // color: "#dc2626"
+                                    }
+                                }
+
+                                Button {
+                                    text: "Set Threshold"
+                                    enabled: telemetryModel.connectStatus===1
+
+                                    onClicked: {
+                                        const warning = parseInt(vibration_warningThresholdInput.text)
+                                        const fault = parseInt(vibration_faultThresholdInput.text)
+
+                                        if (isNaN(warning) || isNaN(fault))
+                                        {
+                                            console.log("Invalid threshold input")
+                                            return
+                                        }
+
+                                        if (warning >= fault)
+                                        {
+                                            console.log("Warning threshold must be lower than fault threshold")
+                                            return
+                                        }
+
+                                        telemetryModel.setVibrationThreshold(warning, fault)
+                                    }
+                                }
+                            }
+                        }
+
                         Rectangle {
                             Layout.fillWidth: true
                             height: 110
