@@ -297,8 +297,8 @@ docker compose run --rm hmi-dev
 Inside Docker:
 
 ```bash
-source /opt/ros/jazzy/setup.bash
-source /hmi/ros_ws/install/setup.bash
+source /opt/ros/jazzy/setup.sh
+source /hmi/ros_ws/install/setup.sh
 ```
 
 ### 4. Build the HMI
