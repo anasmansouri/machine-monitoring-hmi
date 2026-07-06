@@ -11,6 +11,10 @@ class TelemetryModel : public QObject
     Q_PROPERTY(int temperature READ temperature NOTIFY telemetryChanged)
     Q_PROPERTY(int humidity READ humidity NOTIFY telemetryChanged)
     Q_PROPERTY(int load READ load NOTIFY telemetryChanged)
+    Q_PROPERTY(QString emergency_button READ emergency_button NOTIFY telemetryChanged)
+    Q_PROPERTY(unsigned int fanRpm READ fanRpm NOTIFY telemetryChanged)
+    Q_PROPERTY(int vibration_level_mg READ vibration_level_mg NOTIFY telemetryChanged)
+
     Q_PROPERTY(QString state READ state NOTIFY telemetryChanged)
     Q_PROPERTY(QString fault READ fault NOTIFY telemetryChanged)
 
@@ -26,6 +30,11 @@ public:
     int temperature() const;
     int humidity() const;
     int load() const;
+
+    unsigned int fanRpm()const ;
+    QString emergency_button() const ;
+    int vibration_level_mg()const;
+
     QString state() const;
     QString fault() const;
     QString lastCommandName() const;
@@ -38,6 +47,7 @@ public:
     Q_INVOKABLE void stopMachine();
     Q_INVOKABLE void resetFault();
     Q_INVOKABLE void setLoadThreshold(int warning, int fault);
+    Q_INVOKABLE void setVibrationThreshold(int warning, int fault);
 
 signals:
     void telemetryChanged();
@@ -46,12 +56,16 @@ signals:
     void resetFaultRequested();
     void commandResultChanged();
     void setLoadThresholdRequested(int warning, int fault);
+    void setVibrationThresholdRequested(int warning, int fault);
     void connectStatusChanged();
 
 public slots:
     void setTelemetry(int temperature,
                       int humidity,
                       int load,
+                      int vibration_level_mg,
+                      bool emergency_button,
+                      unsigned int fanRpm,
                       const QString &state,
                       const QString &fault);
     void setCommandResult(const QString &commandName,
@@ -63,6 +77,10 @@ private:
     int temperature_ = 24;
     int humidity_ = 50;
     int load_ = 20;
+
+    bool emergency_button_ = 0;
+    unsigned int fanRpm_ =0;
+    int vibration_level_mg_=1000;
 
     QString state_ = "MACHINE_STATE_IDLE";
     QString fault_ = "FAULT_NONE";

@@ -62,6 +62,13 @@ int main(int argc, char *argv[])
         &TelemetryModel::setLoadThresholdRequested,
         &commandClient,
         &Ros2CommandClient::setLoadThreshold);
+    QObject::connect(
+        &telemetryModel,
+        &TelemetryModel::setVibrationThresholdRequested,
+        &commandClient,
+        &Ros2CommandClient::setVibrationThreshold);
+
+
 
     ros2Client.start();
 
