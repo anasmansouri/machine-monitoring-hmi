@@ -1,24 +1,26 @@
-
 # Machine Monitoring HMI
 
-A Qt/QML Human-Machine Interface for an embedded machine monitoring system.
+Qt/QML Human-Machine Interface for an embedded machine monitoring and control system.
 
-This application runs inside a ROS2 Jazzy Docker development environment and communicates with a Raspberry Pi 5 Yocto-based gateway over ROS2. The Raspberry Pi forwards commands and telemetry between the HMI and an STM32 firmware node through ROS2, Unix socket IPC, and UART.
+The HMI runs in a ROS2 Jazzy Docker development environment on the host PC. It communicates with a Raspberry Pi 5 Yocto-based edge gateway over ROS2. The Raspberry Pi forwards telemetry and commands between the HMI and an STM32 machine I/O node through ROS2, Unix socket IPC, and UART.
 
 ## Project Goal
 
-The goal of this project is to build a practical embedded HMI that demonstrates real system integration between:
+The goal of this project is to demonstrate a practical embedded HMI connected to a real microcontroller and embedded Linux gateway.
+
+It integrates:
 
 * Qt/QML frontend
-* C++ backend
-* ROS2 communication
+* C++ backend exposed to QML
+* ROS2 Jazzy communication
+* Custom ROS2 interfaces
 * Raspberry Pi 5 running Yocto Linux
-* STM32 firmware
-* UART communication
-* Systemd services
-* Real machine telemetry and control commands
+* STM32 firmware over UART
+* Real machine telemetry
+* Machine control commands
+* Load threshold configuration
 
-This project is part of a larger embedded Linux and STM32 machine monitoring platform.
+This project is part of a larger end-to-end embedded monitoring platform.
 
 ## Screenshot
 
@@ -27,59 +29,89 @@ This project is part of a larger embedded Linux and STM32 machine monitoring pla
 ## System Architecture
 
 ```text
-Qt/QML HMI
-    |
-    | ROS2 over Ethernet
-    v
-Raspberry Pi 5 Yocto Gateway
-    |
-    | ROS2 bridge
-    v
-ros2-stm32-bridge
-    |
-    | Unix socket IPC
-    v
-edge-gateway
-    |
-    | UART
-    v
-STM32 firmware
++------------------------------+
+| Qt/QML HMI                   |
+| - Compact dashboard          |
+| - Machine controls           |
+| - Load threshold settings    |
+| - Command result feedback    |
++---------------+--------------+
+                |
+                | ROS2 over Ethernet
+                v
++---------------+--------------+
+| Raspberry Pi 5 Yocto Gateway |
+| ros2-stm32-bridge            |
+| edge-gateway                 |
++---------------+--------------+
+                |
+                | UART
+                v
++---------------+--------------+
+| STM32 Machine I/O Node       |
+| Sensors, fan, LEDs, E-stop   |
++------------------------------+
 ```
+
+End-to-end command example:
+
+```text
+QML button
+  -> TelemetryModel C++ method
+  -> Qt signal
+  -> Ros2CommandClient
+  -> ROS2 service call
+  -> Raspberry Pi bridge
+  -> edge-gateway
+  -> UART command to STM32
+  -> response shown in HMI
+```
+
+## Related Repositories
+
+```text
+Raspberry Pi / Yocto / ROS2 gateway : https://github.com/anasmansouri/machine-monitoring-edge-gateway
+STM32 firmware                      : https://github.com/anasmansouri/stm32-machine-io-node
+```
+
+## Current Dashboard
+
+The current compact HMI shows:
+
+* Connection status
+* Temperature
+* Humidity
+* Load
+* Machine state
+* Fan RPM
+* Emergency button state
+* Fault state
+* Load warning/fault threshold inputs
+* Last command result
+* Start / Stop / Reset Fault buttons
+
+The vibration card was removed from the current dashboard because the ADXL345 sensor is temporarily disabled in the hardware setup. The backend interface can still keep vibration fields for compatibility with the gateway and ROS2 message.
 
 ## Features
 
 * Live telemetry display from ROS2
+* Compact one-page QML dashboard
+* Connection status indicator
 * Temperature monitoring
 * Humidity monitoring
 * Load monitoring
+* Fan RPM monitoring
+* Emergency stop state display
 * Machine state display
 * Fault state display
 * Start machine command
 * Stop machine command
 * Reset fault command
-* Set load warning threshold
-* Set load fault threshold
+* Load warning/fault threshold configuration
 * Command result feedback inside the GUI
 * Docker-based development environment
 * Qt/QML frontend with C++ backend
 * ROS2 Jazzy communication over Ethernet
-
-## Current HMI Functions
-
-The HMI can display real telemetry from:
-
-```text
-/machine/telemetry
-```
-
-It can call these ROS2 services:
-
-```text
-/machine/start_machine
-/machine/stop_machine
-/machine/reset_fault
-/machine/set_load_threshold
-```
 
 ## ROS2 Interfaces
 
@@ -95,18 +127,38 @@ Message type:
 machine_interfaces/msg/MachineTelemetry
 ```
 
-Example fields:
+Full message fields:
+
+```text
+int32 temperature
+int32 humidity
+int32 load
+uint32 fan_rpm
+int32 vibration_x_mg
+int32 vibration_y_mg
+int32 vibration_z_mg
+int32 vibration_level_mg
+bool emergency_button
+string state
+string fault
+string operating_mode
+string dht_status
+string load_status
+```
+
+Current UI-visible fields:
 
 ```text
 temperature
 humidity
 load
+fan_rpm
+emergency_button
 state
 fault
-operating_mode
-dht_status
-load_status
 ```
+
+Vibration fields can remain in the ROS2 message as `0` while the physical vibration sensor is disabled.
 
 ### Command Services
 
@@ -131,7 +183,7 @@ std_srvs/srv/Trigger
 Service type:
 
 ```text
-machine_interfaces/srv/SetLoadThreshold
+machine_interfaces/srv/SetThreshold
 ```
 
 Example request:
@@ -140,6 +192,8 @@ Example request:
 warning: 60
 fault: 85
 ```
+
+The backend can also support `/machine/set_vibration_threshold` for future re-enabling of the vibration sensor, but the current compact HMI does not expose this control.
 
 ## Repository Structure
 
@@ -159,6 +213,8 @@ machine-monitoring-hmi/
 │   └── Ros2CommandClient.cpp
 ├── qml/
 │   └── Main.qml
+├── ros_ws/
+│   └── src/machine_interfaces/
 └── README.md
 ```
 
@@ -166,41 +222,42 @@ machine-monitoring-hmi/
 
 ### QML Frontend
 
-The QML frontend defines the graphical user interface.
-
-It displays:
-
-* Temperature
-* Humidity
-* Load
-* Machine state
-* Fault state
-* Last command result
-* Load threshold inputs
-* Control buttons
-
 Main file:
 
 ```text
 qml/Main.qml
 ```
 
+The QML frontend defines the graphical user interface and displays:
+
+* Metric cards
+* Machine state and fault status
+* Load threshold form
+* Command buttons
+* Last command feedback
+* Connection status
+
 ### TelemetryModel
 
 `TelemetryModel` is the Qt data model exposed to QML.
 
-It stores the current values shown in the GUI:
+It stores values displayed in the GUI:
 
-* `temperature`
-* `humidity`
-* `load`
-* `state`
-* `fault`
-* `lastCommandName`
-* `lastCommandSuccess`
-* `lastCommandMessage`
+```text
+temperature
+humidity
+load
+fanRpm
+emergency_button
+state
+fault
+connectStatus
+lastCommandName
+lastCommandSuccess
+lastCommandMessage
+```
 
-It also exposes functions called from QML:
+It also exposes QML-callable functions:
 
 ```cpp
 startMachine()
@@ -219,13 +276,7 @@ It subscribes to:
 /machine/telemetry
 ```
 
-When new telemetry arrives, it emits a Qt signal:
-
-```cpp
-telemetryReceived(...)
-```
-
-That signal updates `TelemetryModel`.
+When new telemetry arrives, it emits a Qt signal that updates `TelemetryModel`.
 
 ### Ros2CommandClient
 
@@ -240,13 +291,7 @@ It calls:
 /machine/set_load_threshold
 ```
 
-When a service response arrives, it emits:
-
-```cpp
-commandResult(...)
-```
-
-That result is displayed in the GUI.
+When a service response arrives, it emits a command result signal. The result is displayed in the GUI.
 
 ## Development Environment
 
@@ -262,16 +307,11 @@ The Docker container uses host networking so ROS2 can communicate with the Raspb
 
 ## Network Setup
 
-The current direct Ethernet setup is:
+Current direct Ethernet setup:
 
 ```text
 Host PC:      192.168.50.1
 Raspberry Pi: 192.168.50.2
-```
-
-ROS2 settings:
-
-```text
 ROS_DOMAIN_ID=7
 ROS_LOCALHOST_ONLY=0
 ```
@@ -292,20 +332,29 @@ xhost +local:root
 docker compose run --rm hmi-dev
 ```
 
-### 3. Source ROS2 and custom interfaces
+### 3. Build custom ROS2 interfaces
 
 Inside Docker:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-source /hmi/ros_ws/install/setup.bash
+cd /hmi/ros_ws
+rm -rf build install log
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Check interfaces:
+
+```bash
+ros2 interface show machine_interfaces/msg/MachineTelemetry
+ros2 interface show machine_interfaces/srv/SetThreshold
 ```
 
 ### 4. Build the HMI
 
 ```bash
 cd /hmi
-
 rm -rf build-docker
 cmake -S . -B build-docker
 cmake --build build-docker -j$(nproc)
@@ -343,13 +392,19 @@ Expected:
 /machine/telemetry
 ```
 
+Check telemetry:
+
+```bash
+ros2 topic echo /machine/telemetry
+```
+
 Check available services:
 
 ```bash
 ros2 service list
 ```
 
-Expected:
+Expected services:
 
 ```text
 /machine/start_machine
@@ -358,17 +413,19 @@ Expected:
 /machine/set_load_threshold
 ```
 
-Test telemetry:
+Optional service that may also exist in the gateway:
 
-```bash
-ros2 topic echo /machine/telemetry
+```text
+/machine/set_vibration_threshold
 ```
 
-Test a service manually:
+Manual service tests:
 
 ```bash
 ros2 service call /machine/reset_fault std_srvs/srv/Trigger "{}"
 ros2 service call /machine/start_machine std_srvs/srv/Trigger "{}"
+ros2 service call /machine/stop_machine std_srvs/srv/Trigger "{}"
+ros2 service call /machine/set_load_threshold machine_interfaces/srv/SetThreshold "{warning: 60, fault: 85}"
 ```
 
 ## Docker Notes
@@ -396,23 +453,43 @@ These allow:
 
 ## Current Status
 
-Working features:
+Working:
 
 * Qt/QML GUI starts successfully inside Docker
+* Compact one-page dashboard is implemented
 * ROS2 discovery works from Docker to Raspberry Pi
-* Custom `machine_interfaces` package is built and sourced
+* Custom `machine_interfaces` package builds successfully
 * Live telemetry is displayed in the HMI
+* Temperature, humidity, load, fan RPM, emergency state, machine state and fault are shown
 * Start, stop, and reset fault buttons call real ROS2 services
 * Command results are displayed in the GUI
 * Load warning and fault thresholds can be configured from the HMI
-* Connection status display
+* Connection status display is available
+
+Current hardware/HMI scope:
+
+```text
+Temperature
+Humidity
+Load
+Fan RPM
+Emergency stop
+Machine state
+Fault state
+Load threshold configuration
+Start / Stop / Reset Fault commands
+```
+
+Vibration monitoring is intentionally hidden from the current UI because the ADXL345 sensor is temporarily removed from the hardware setup.
 
 ## Future Improvements
 
-Planned next steps:
-
-* Show last telemetry update time
-* Improve UI layout and styling
+* Re-enable vibration dashboard card when the ADXL345 or a replacement sensor is available
+* Add last telemetry update timestamp
+* Add better visual state colors for warning/fault conditions
+* Add a connection lost timeout indicator
+* Add a short demo video and updated screenshot
+* Package the HMI for easier deployment outside the development container
 
 ## Example End-to-End Flow
 
@@ -448,15 +525,16 @@ STM32 starts machine
     v
 Response appears in HMI
 ```
-## Related Projects
 
-This HMI is part of a larger machine monitoring system:
+## Full Project Chain
 
 ```text
-machine-monitoring-edge-gateway : https://github.com/anasmansouri/machine-monitoring-edge-gateway
-stm32-machine-io-node : https://github.com/anasmansouri/stm32-machine-io-node
-machine-monitoring-hmi : https://github.com/anasmansouri/machine-monitoring-hmi 
+STM32 Machine I/O Node
+  -> UART
+  -> Raspberry Pi 5 Yocto Edge Gateway
+  -> Unix socket IPC
+  -> ROS2 /machine/telemetry and services
+  -> Qt/QML HMI
 ```
-Together, these projects demonstrate an end-to-end embedded monitoring and control system.
 
-
+Together, these repositories demonstrate an end-to-end embedded monitoring and control system.
