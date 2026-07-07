@@ -24,7 +24,7 @@ This project is part of a larger end-to-end embedded monitoring platform.
 
 ## Screenshot
 
-![Machine Monitoring HMI](docs/images/hmi-dashboard.png)
+![Machine Monitoring HMI](docs/images/hmi-dashboard-updated.png)
 
 ## System Architecture
 
