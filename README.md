@@ -482,15 +482,6 @@ Start / Stop / Reset Fault commands
 
 Vibration monitoring is intentionally hidden from the current UI because the ADXL345 sensor is temporarily removed from the hardware setup.
 
-## Future Improvements
-
-* Re-enable vibration dashboard card when the ADXL345 or a replacement sensor is available
-* Add last telemetry update timestamp
-* Add better visual state colors for warning/fault conditions
-* Add a connection lost timeout indicator
-* Add a short demo video and updated screenshot
-* Package the HMI for easier deployment outside the development container
-
 ## Example End-to-End Flow
 
 When the user clicks `Start Machine`:
